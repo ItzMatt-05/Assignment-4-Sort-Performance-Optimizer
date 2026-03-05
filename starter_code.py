@@ -2,14 +2,17 @@
 Sorting Assignment Starter Code
 Implement five sorting algorithms and benchmark their performance.
 """
+
 import json
 import time
 import random
 import tracemalloc
 
+
 # ============================================================================
 # PART 1: SORTING IMPLEMENTATIONS
 # ============================================================================
+
 def bubble_sort(arr):
     """
     Sort array using bubble sort algorithm.
@@ -30,19 +33,17 @@ def bubble_sort(arr):
     # Hint: Use nested loops - outer loop for passes, inner loop for comparisons
     # Hint: Compare adjacent elements and swap if left > right
     
-    data = arr.copy()
-    n = len(data)
-
+    a=arr.copy()
+    n=len(a)
     for i in range(n):
-        swapped = False
-        for j in range(0, n - 1 - i):
-            if data[j] > data[j + 1]:
-                data[j], data[j + 1] = data[j + 1], data[j]
-                swapped = True
+        swapped=False
+        for j in range(0,n-1-i):
+            if a[j]>a[j+1]:
+                a[j],a[j+1]=a[j+1],a[j]
+                swapped=True
         if not swapped:
             break
-
-    return data
+    return a
 
 
 def selection_sort(arr):
@@ -64,17 +65,16 @@ def selection_sort(arr):
     # TODO: Implement selection sort
     # Hint: Find minimum element in unsorted portion, swap it with first unsorted element
     
-    data = arr.copy()
-    n = len(data)
-
+    a=arr.copy()
+    n=len(a)
     for i in range(n):
-        min_index = i
-        for j in range(i + 1, n):
-            if data[j] < data[min_index]:
-                min_index = j
-        data[i], data[min_index] = data[min_index], data[i]
-
-    return data
+        min_i=i
+        for j in range(i+1,n):
+            if a[j]<a[min_i]:
+                min_i=j
+        if min_i!=i:
+            a[i],a[min_i]=a[min_i],a[i]
+    return a
 
 
 def insertion_sort(arr):
@@ -96,19 +96,16 @@ def insertion_sort(arr):
     # TODO: Implement insertion sort
     # Hint: Start from second element, insert it into correct position in sorted portion
     
-    data = arr.copy()
-
-    for i in range(1, len(data)):
-        key = data[i]
-        j = i - 1
-
-        while j >= 0 and data[j] > key:
-            data[j + 1] = data[j]
-            j -= 1
-
-        data[j + 1] = key
-
-    return data
+    a=arr.copy()
+    n=len(a)
+    for i in range(1,n):
+        key=a[i]
+        j=i-1
+        while j>=0 and a[j]>key:
+            a[j+1]=a[j]
+            j-=1
+        a[j+1]=key
+    return a
 
 
 def merge_sort(arr):
@@ -132,42 +129,36 @@ def merge_sort(arr):
     # Hint: Recursive case - split array in half, sort each half, merge sorted halves
     # Hint: You'll need a helper function to merge two sorted arrays
     
-    def merge(left, right):
-        merged = []
-        i = 0
-        j = 0
-
-        while i < len(left) and j < len(right):
-            if left[i] <= right[j]:
+    def merge(left,right):
+        merged=[]
+        i=0
+        j=0
+        while i<len(left) and j<len(right):
+            if left[i]<=right[j]:
                 merged.append(left[i])
-                i += 1
+                i+=1
             else:
                 merged.append(right[j])
-                j += 1
-
-        if i < len(left):
+                j+=1
+        if i<len(left):
             merged.extend(left[i:])
-        if j < len(right):
+        if j<len(right):
             merged.extend(right[j:])
-
         return merged
 
-    def merge_sort_recursive(data):
-        if len(data) <= 1:
-            return data
-
-        mid = len(data) // 2
-        left = merge_sort_recursive(data[:mid])
-        right = merge_sort_recursive(data[mid:])
-
-        return merge(left, right)
-
-    return merge_sort_recursive(arr.copy())
+    a=arr.copy()
+    if len(a)<=1:
+        return a
+    mid=len(a)//2
+    left=merge_sort(a[:mid])
+    right=merge_sort(a[mid:])
+    return merge(left,right)
 
 
 # ============================================================================
 # PART 2: STABILITY DEMONSTRATION
 # ============================================================================
+
 def demonstrate_stability():
     """
     Demonstrate which sorting algorithms are stable by sorting products by price.
@@ -179,71 +170,90 @@ def demonstrate_stability():
         dict: Results showing which algorithms preserved order for equal elements
     """
     # Sample products with duplicate prices
-    products = [
-        {"name": "Widget A", "price": 1999, "original_position": 0},
-        {"name": "Gadget B", "price": 999, "original_position": 1},
-        {"name": "Widget C", "price": 1999, "original_position": 2},
-        {"name": "Tool D", "price": 999, "original_position": 3},
-        {"name": "Widget E", "price": 1999, "original_position": 4},
+    products=[
+        {"name":"Widget A","price":1999,"original_position":0},
+        {"name":"Gadget B","price":999,"original_position":1},
+        {"name":"Widget C","price":1999,"original_position":2},
+        {"name":"Tool D","price":999,"original_position":3},
+        {"name":"Widget E","price":1999,"original_position":4},
     ]
     
-    # TODO: Sort products by price using each algorithm
-    # Hint: You'll need to modify your sorting functions to work with dictionaries
-    # Hint: Or extract prices, sort them, and check if stable algorithms maintain original order
-    # Hint: For stable sort: items with price 999 should stay in order (B before D)
-    # Hint: For stable sort: items with price 1999 should stay in order (A before C before E)
-    
-    results = {
-        "bubble_sort": "Not tested",
-        "selection_sort": "Not tested", 
-        "insertion_sort": "Not tested",
-        "merge_sort": "Not tested"
+    results={
+        "bubble_sort":"Not tested",
+        "selection_sort":"Not tested",
+        "insertion_sort":"Not tested",
+        "merge_sort":"Not tested"
     }
     
-    # TODO: Test each algorithm and update results dictionary with "Stable" or "Unstable"
+    def stable_check(sort_name):
+        test_products=products.copy()+[{"name":"Cheap Z","price":500,"original_position":5},{"name":"Widget F","price":1999,"original_position":6}]
+        items=[(p["price"],p["original_position"]) for p in test_products]
 
-    def map_prices_to_products(sorted_prices, original_products):
-        prices_copy = [p["price"] for p in original_products]
-        mapped = []
+        if sort_name=="bubble_sort":
+            a=items.copy()
+            n=len(a)
+            for i in range(n):
+                for j in range(0,n-1-i):
+                    if a[j][0]>a[j+1][0]:
+                        a[j],a[j+1]=a[j+1],a[j]
 
-        for price in sorted_prices:
-            for i, original_price in enumerate(prices_copy):
-                if original_price == price:
-                    mapped.append(original_products[i])
-                    prices_copy[i] = None
-                    break
+        elif sort_name=="selection_sort":
+            a=items.copy()
+            n=len(a)
+            for i in range(n):
+                min_i=i
+                for j in range(i+1,n):
+                    if a[j][0]<a[min_i][0]:
+                        min_i=j
+                if min_i!=i:
+                    a[i],a[min_i]=a[min_i],a[i]
 
-        return mapped
+        elif sort_name=="insertion_sort":
+            a=items.copy()
+            for i in range(1,len(a)):
+                key=a[i]
+                j=i-1
+                while j>=0 and a[j][0]>key[0]:
+                    a[j+1]=a[j]
+                    j-=1
+                a[j+1]=key
 
-    def is_stable(sorted_products):
-        positions_by_price = {}
-
-        for p in sorted_products:
-            positions_by_price.setdefault(p["price"], []).append(p["original_position"])
-
-        for price, positions in positions_by_price.items():
-            if positions != sorted(positions):
-                return False
-
-        return True
-
-    algorithms = {
-        "bubble_sort": bubble_sort,
-        "selection_sort": selection_sort,
-        "insertion_sort": insertion_sort,
-        "merge_sort": merge_sort
-    }
-
-    prices = [p["price"] for p in products]
-
-    for name, func in algorithms.items():
-        sorted_prices = func(prices.copy())
-        sorted_products = map_prices_to_products(sorted_prices, products)
-
-        if is_stable(sorted_products):
-            results[name] = "Stable"
+        elif sort_name=="merge_sort":
+            def merge_pairs(left,right):
+                merged=[]
+                i=0
+                j=0
+                while i<len(left) and j<len(right):
+                    if left[i][0]<=right[j][0]:
+                        merged.append(left[i])
+                        i+=1
+                    else:
+                        merged.append(right[j])
+                        j+=1
+                merged.extend(left[i:])
+                merged.extend(right[j:])
+                return merged
+            def ms(x):
+                if len(x)<=1:
+                    return x
+                mid=len(x)//2
+                return merge_pairs(ms(x[:mid]),ms(x[mid:]))
+            a=ms(items.copy())
         else:
-            results[name] = "Unstable"
+            return "Not tested"
+
+        by_price={}
+        for price,pos in a:
+            by_price.setdefault(price,[]).append(pos)
+        for price,positions in by_price.items():
+            if positions!=sorted(positions):
+                return "Unstable"
+        return "Stable"
+
+    results["bubble_sort"]=stable_check("bubble_sort")
+    results["selection_sort"]=stable_check("selection_sort")
+    results["insertion_sort"]=stable_check("insertion_sort")
+    results["merge_sort"]=stable_check("merge_sort")
     
     return results
 
@@ -251,6 +261,7 @@ def demonstrate_stability():
 # ============================================================================
 # PART 3: PERFORMANCE BENCHMARKING
 # ============================================================================
+
 def load_dataset(filename):
     """Load a dataset from JSON file."""
     with open(f"datasets/{filename}", "r") as f:
@@ -387,12 +398,7 @@ if __name__ == "__main__":
     print("SORTING ASSIGNMENT - STARTER CODE")
     print("Implement the sorting functions above, then run tests.\n")
     
-    # Uncomment these as you complete each part:
-    
-    # test_sorting_correctness()
-    # benchmark_all_datasets()
-    # analyze_stability()
-    
-    print("\n⚠ Uncomment the test functions in the main block to run benchmarks!")
-    
-    print("\n⚠ Uncomment the test functions in the main block to run benchmarks!")
+    test_sorting_correctness()
+    benchmark_all_datasets()
+    analyze_stability()
+
